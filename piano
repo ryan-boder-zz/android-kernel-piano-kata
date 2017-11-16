@@ -1,0 +1,7 @@
+#!/bin/sh
+
+while true
+do
+    read -n1 x
+    echo $x > /dev/piano
+done
