@@ -47,7 +47,7 @@ $ git clone https://android.googlesource.com/kernel/goldfish
 $ cd goldfish
 ```
 
-Linux file systems are case-sensitive by default but OSX and Windows are not. If you share a folder from your OSX or Windows host to your Linux VM it will be mounted in Linux as a case-insensitive file system. The Linux kernel must be built on a case-sensitive file system so you can not built the kernel in a host shared folder unless you have made that folder case-sensitive on your host.
+> Linux file systems are case-sensitive by default but OSX and Windows are not. If you share a folder from your OSX or Windows host to your Linux VM it will be mounted in Linux as a case-insensitive file system. The Linux kernel must be built on a case-sensitive file system so you can not built the kernel in a host shared folder unless you have made that folder case-sensitive on your host.
 
 #### Set your toolchain and target architecture
 
