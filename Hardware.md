@@ -39,7 +39,7 @@ The goldfish audio device uses [direct memory access](https://en.wikipedia.org/w
 
 DMA devices need [memory coherence](https://en.wikipedia.org/wiki/Memory_coherence) with the CPU to ensure that changes are immediately visible to both sides and not stuck somewhere in cache.
 
-:white_check_mark: Use [dma_alloc_coherent()](https://www.kernel.org/doc/Documentation/DMA-API.txt) to allocate a contiguous region of coherent memory in kernel space that can be used as shared memory with the audio device. The region should be big enough to contain all the memory you need shared with the device.
+:white_check_mark: Use [dma_alloc_coherent()](https://www.kernel.org/doc/Documentation/DMA-API.txt) to allocate a contiguous region of coherent memory in kernel space that can be used as shared memory with the audio device. The region should be big enough to contain 2 x 16384 byte write buffers which is all the memory you need shared with the device.
 
 :white_check_mark: Don't forget to dma_free_coherent() the DMA memory when you're done.
 
@@ -60,3 +60,15 @@ static irqreturn_t goldfish_piano_interrupt(int irq, void *dev)
 :white_check_mark: Use [request_irq()](https://notes.shichao.io/lkd/ch7/#registering-an-interrupt-handler) to register your interrupt handler as a shared handler with the kernel so that it will be called when the audio device interrupts the CPU.
 
 :white_check_mark: In order to call request_irq() you need to know the interrupt line number that the audio device will use to interrupt the CPU. Use [platform_get_irq()](https://lwn.net/Articles/448499) to get the interrupt line number for the goldfish audio device.
+
+#### Tell the device where to find the write buffers
+
+You previously allocated a DMA memory region big enough for 2 write buffers but the goldfish audio device doesn't know where to find those buffers.
+
+:white_check_mark: Use [writel()](http://www.xml.com/ldd/chapter/book/ch08.html#t4) to set both kernel output buffer addresses in the audio device I/O registers.
+
+#### Check status when an interrupt is received
+
+As a shared interrupt handler, your interrupt handler needs to check the status of the audio device to determine whether the interrupt actually came from the audio device.
+
+:white_check_mark: Use [readl()](http://www.xml.com/ldd/chapter/book/ch08.html#t4) to get the interrupt status from the audio device's INT_STATUS register. Note that you only care about the bottom 3 bits in the INT_STATUS register. If the interrupt did come from the audio device you should handle it appropriately and return `IRQ_HANDLED`. If the interrupt did not come from the audio device you should do nothing and return `IRQ_NONE`.
