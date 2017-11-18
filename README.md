@@ -10,9 +10,9 @@ Use the [environment set up guide](Environment.md) to set up your development en
 
 Create a [skeleton piano device driver](Skeleton.md) that we will build our piano on.
 
-## The Goldfish audio device
+## Interface with the Goldfish audio device
 
-The goldfish virtual audio device is documented [here](https://android.googlesource.com/platform/external/qemu/+/master/docs/GOLDFISH-VIRTUAL-HARDWARE.TXT) in section VI. Refer to this document as needed for details on how to interface with the device.
+Interface with the [Goldfish emulated audio device](Hardware.md) to play audio on the Android emulator.
 
 ## Verified versions
 
