@@ -42,3 +42,21 @@ DMA devices need [memory coherence](https://en.wikipedia.org/wiki/Memory_coheren
 :white_check_mark: Use [dma_alloc_coherent()](https://www.kernel.org/doc/Documentation/DMA-API.txt) to allocate a contiguous region of coherent memory in kernel space that can be used as shared memory with the audio device. The region should be big enough to contain all the memory you need shared with the device.
 
 :white_check_mark: Don't forget to dma_free_coherent() the DMA memory when you're done.
+
+#### Set up interrupt handling
+
+When the audio device wants to notify the CPU that something has occurred and needs attention it interrupts the CPU. We need to set up an interrupt handler that will be called when the audio device interrupts the CPU.
+
+:white_check_mark: Create an [interrupt handler function](https://notes.shichao.io/lkd/ch7/#writing-an-interrupt-handler) that just logs that an interrupt was received and acknowledges it as handled.
+
+```c
+static irqreturn_t goldfish_piano_interrupt(int irq, void *dev)
+{
+    printk("goldfish_piano_interrupt\n");
+    return IRQ_HANDLED;
+}
+```
+
+:white_check_mark: Use [request_irq()](https://notes.shichao.io/lkd/ch7/#registering-an-interrupt-handler) to register your interrupt handler as a shared handler with the kernel so that it will be called when the audio device interrupts the CPU.
+
+:white_check_mark: In order to call request_irq() you need to know the interrupt line number that the audio device will use to interrupt the CPU. Use [platform_get_irq()](https://lwn.net/Articles/448499) to get the interrupt line number for the goldfish audio device.
