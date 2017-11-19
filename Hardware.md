@@ -85,7 +85,11 @@ When you are writing data to the audio device you will need to keep track of whi
 
 To produce data into buffer 1 you will need to wait for the device to tell you that buffer 1 is available by reading the status register in your interrupt handler and checking whether the bit 0 is 1. Then you can produce data into buffer 1 and use [writel()](http://www.xml.com/ldd/chapter/book/ch08.html#t4) to write the AUDIO_WRITE_BUFFER_1 register with the number of bytes you have put into buffer 1. Use the same approach for buffer 2 but check bit 1 in the status register and write the byte count to the AUDIO_WRITE_BUFFER_2 register.
 
-The difficult part is that you should not produce all that data into write buffers directly in the interrupt handler. Your interrupt handler should do minimal work and be extremely fast. It also [executes without a process context](https://notes.shichao.io/lkd/ch7/#difference-from-the-process-context) which limits what you can do. Instead your interrupt handler should just check the status register and then wake up a waiting process to do the actual work. Consider using a [wait queue](http://tuxthink.blogspot.com/2011/04/wait-queues.html) to put a process to sleep and then waking up that process in your interrupt handler if there is work to be done.
+The difficult part is that you should not produce all that data into write buffers directly in the interrupt handler. Your interrupt handler should do minimal work and be extremely fast. It also [executes without a process context](https://notes.shichao.io/lkd/ch7/#difference-from-the-process-context) which limits what you can do. Instead your interrupt handler should just check the status register and then wake up a waiting process (hint: your write function) to do the actual work. Consider using a [wait queue](http://tuxthink.blogspot.com/2011/04/wait-queues.html) to put a process to sleep and then waking up that process in your interrupt handler if there is work to be done.
+
+#### Synchronization
+
+In order to do minimal work in the interrupt handler and defer the heavy work to a process you may need to share data between these 2 potentially concurrent threads of execution. Therefore you need synchronization. Consider using a [spinlock](http://www.linuxjournal.com/article/5833) to synchronize access to shared data and avoid a race condition.
 
 #### Enabling and disabling interrupts
 

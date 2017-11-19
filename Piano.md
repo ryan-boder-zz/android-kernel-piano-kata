@@ -14,7 +14,7 @@ android# sh /sdcard/piano
 
 Hit a few keys and watch kernel log to see what functions are called in your driver. This piano script serves as the input mechanism to control the piano device.
 
-#### Playing sounds in the audio device
+#### Playing sound in the audio device
 
 The goldfish audio device takes a stream of pairs of 16 bit signed integer samples. The first channel is the first 16 bit integer in each pair, the second channel is the second integer in each pair.
 
