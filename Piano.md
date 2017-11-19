@@ -36,7 +36,7 @@ The difference between notes on a piano is the frequency at which those samples 
 
 Program the piano driver so that when you press a key listed on one of the 3 right columns in the table your driver generates and plays the appropriate wave of the corresponding frequency for 1 second at a fixed volume.
 
-| Note | Frequency | Square | Saw | Sine |
+| Note | Freq (Hz) | Square | Saw | Sine |
 | ---- | --------- | ------ | --- | ---- |
 | a    | 440.000   | z      | a   | q    |
 | g#   | 415.305   | x      | s   | w    |
