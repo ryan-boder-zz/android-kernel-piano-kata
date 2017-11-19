@@ -152,7 +152,7 @@ static int goldfish_piano_remove(struct platform_device *pdev)
 Rebuild the kernel and boot it up. Then ADB in to interact with `/dev/piano`.
 
 ```
-android# cat/dev/piano
+android# cat /dev/piano
 Hello World
 android# echo -n "Hello World" > /dev/piano
 ```

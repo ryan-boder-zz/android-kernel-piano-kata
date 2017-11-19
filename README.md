@@ -16,6 +16,10 @@ Create a [skeleton piano device driver](Skeleton.md) that we will build our pian
 
 Interface with the [Goldfish emulated audio device](Hardware.md) to play audio on the Android emulator.
 
+## Implement the piano device driver
+
+Now that all the building blocks are in place, go ahead [implement the piano device driver](Piano.md) turning your keyboard into a piano.
+
 ## Verified versions
 
 - Android Studio 3.0
