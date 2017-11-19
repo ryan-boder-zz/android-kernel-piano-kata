@@ -38,16 +38,16 @@ Program the piano driver so that when you press a key listed on one of the 3 rig
 
 | Note | Freq (Hz) | Square | Saw | Sine |
 | ---- | --------- | ------ | --- | ---- |
-| a    | 440.000   | z      | a   | q    |
-| g#   | 415.305   | x      | s   | w    |
-| g    | 391.995   | c      | d   | e    |
-| f#   | 369.994   | v      | f   | r    |
-| f    | 349.228   | b      | g   | t    |
-| e    | 329.628   | n      | h   | y    |
-| d#   | 311.127   | m      | j   | u    |
-| d    | 293.665   | ,      | k   | i    |
-| c#   | 277.183   | .      | l   | o    |
-| c    | 261.626   | /      | ;   | p    |
+| a    | 440.000   | /      | ;   | p    |
+| g#   | 415.305   | .      | l   | o    |
+| g    | 391.995   | ,      | k   | i    |
+| f#   | 369.994   | m      | j   | u    |
+| f    | 349.228   | n      | h   | y    |
+| e    | 329.628   | b      | g   | t    |
+| d#   | 311.127   | v      | f   | r    |
+| d    | 293.665   | c      | d   | e    |
+| c#   | 277.183   | x      | s   | w    |
+| c    | 261.626   | z      | a   | q    |
 
 Note that the kernel has no math library functions and doesn't even support floating point operations! How will you approximate a sine wave?
 
