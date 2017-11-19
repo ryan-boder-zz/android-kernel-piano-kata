@@ -50,6 +50,8 @@ When the audio device wants to notify the CPU that something has occurred and ne
 :white_check_mark: Create an [interrupt handler function](https://notes.shichao.io/lkd/ch7/#writing-an-interrupt-handler) that just logs that an interrupt was received and acknowledges it as handled.
 
 ```c
+#include <linux/interrupt.h>
+
 static irqreturn_t goldfish_piano_interrupt(int irq, void *dev)
 {
     printk("goldfish_piano_interrupt\n");
@@ -65,10 +67,22 @@ static irqreturn_t goldfish_piano_interrupt(int irq, void *dev)
 
 You previously allocated a DMA memory region big enough for 2 write buffers but the goldfish audio device doesn't know where to find those buffers.
 
-:white_check_mark: Use [writel()](http://www.xml.com/ldd/chapter/book/ch08.html#t4) to set both kernel output buffer addresses in the audio device I/O registers.
+:white_check_mark: Use [writel()](http://www.xml.com/ldd/chapter/book/ch08.html#t4) to set both kernel output buffer addresses in the SET_WRITE_BUFFER_1 & SET_WRITE_BUFFER_2 I/O registers.
 
 #### Check status when an interrupt is received
 
 As a shared interrupt handler, your interrupt handler needs to check the status of the audio device to determine whether the interrupt actually came from the audio device.
 
-:white_check_mark: Use [readl()](http://www.xml.com/ldd/chapter/book/ch08.html#t4) to get the interrupt status from the audio device's INT_STATUS register. Note that you only care about the bottom 3 bits in the INT_STATUS register. If the interrupt did come from the audio device you should handle it appropriately and return `IRQ_HANDLED`. If the interrupt did not come from the audio device you should do nothing and return `IRQ_NONE`.
+:white_check_mark: Use [readl()](http://www.xml.com/ldd/chapter/book/ch08.html#t4) to get the interrupt status from the audio device's INT_STATUS I/O register. Note that you only care about the bottom 3 bits in the INT_STATUS register. If the interrupt did come from the audio device you should handle it appropriately and return `IRQ_HANDLED`. If the interrupt did not come from the audio device you should do nothing and return `IRQ_NONE`.
+
+#### Using the write buffers
+
+The goldfish audio device uses 2 write buffers for [double buffering](https://en.wikipedia.org/wiki/Multiple_buffering) which allows the device to be reading data from one buffer while we are writing data to the other. We can have the second buffer ready with data and waiting so the device can near-instantly switch to it when it finishes "playing" all the data in the first buffer. This way the sound keeps playing continuously without a break when the device switches buffers.
+
+The audio device plays 44.1 kHz stereo (2 channel) sound with 16 bit samples. It uses 2x16 = 32 bits = 4 bytes every 1/44100 seconds. Our 16384 byte write buffers can only hold 16384/4 = 4096 samples so a write buffer can only hold enough data to play sound for 4096/44100 = 0.09287 seconds. That's less than 1/10 of a second so to play sound for 1 seconds we will have to switch write buffers 11 times!
+
+When you are writing data to the audio device you will need to keep track of which buffer is currently being read by the device and which buffer is available for you to write.
+
+To write data to buffer 1 you will need to wait for the device to tell you that buffer 1 is available by reading the status register in your interrupt handler and seeing whether the bit 0 is 1. Then you can copy data into buffer 1 and use [writel()](http://www.xml.com/ldd/chapter/book/ch08.html#t4) to tell the AUDIO_WRITE_BUFFER_1 register how many bytes you have copied into buffer 1. Use the same approach for buffer 1 but check bit 1 in the status register and write the byte count to the AUDIO_WRITE_BUFFER_2 register.
+
+The difficult part is that you should not copy all that data into the write buffers directly in the interrupt handler. Your interrupt handler should do minimal work and be extremely fast. It also [executes without a process context](https://notes.shichao.io/lkd/ch7/#difference-from-the-process-context) which limits what you can do. Instead your interrupt handler should just check the status register and then wake up a waiting process to do the actual work. Consider using a [wait queue](http://tuxthink.blogspot.com/2011/04/wait-queues.html) to put a process to sleep and then waking up that process in your interrupt handler is there is work to be done.
