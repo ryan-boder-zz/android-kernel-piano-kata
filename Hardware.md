@@ -63,11 +63,7 @@ static irqreturn_t goldfish_piano_interrupt(int irq, void *dev)
 
 :white_check_mark: In order to call request_irq() you need to know the interrupt line number that the audio device will use to interrupt the CPU. Use [platform_get_irq()](https://lwn.net/Articles/448499) to get the interrupt line number for the goldfish audio device.
 
-<<<<<<< HEAD
 :white_check_mark: Don't forget to [free_irq()](https://notes.shichao.io/lkd/ch7/#freeing-an-interrupt-handler) the IRQ line when your driver is removed.
-=======
-:white_check_mark: Don't forget to free_irq() the IRQ line when your driver is removed.
->>>>>>> 89b542e1291edaa67696c5b9b03a838fdca2d5f2
 
 #### Tell the device where to find the write buffers
 
