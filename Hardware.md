@@ -89,7 +89,7 @@ The difficult part is that you should not produce all that data into write buffe
 
 #### Synchronization
 
-In order to do minimal work in the interrupt handler and defer the heavy work to a process you may need to share data between these 2 potentially concurrent threads of execution. Therefore you need synchronization. Consider using a [spinlock](http://www.linuxjournal.com/article/5833) to synchronize access to shared data and avoid a race condition.
+In order to do minimal work in the interrupt handler and defer the heavy work to a process you may need to share data between these 2 potentially concurrent threads of execution. Therefore you need synchronization. Consider using a [spinlock](http://www.linuxjournal.com/article/5833) (with irqsave) to synchronize access to shared data and avoid a race condition.
 
 #### Enabling and disabling interrupts
 
