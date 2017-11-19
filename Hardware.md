@@ -31,7 +31,7 @@ Like user space, the kernel operates with virtual memory but the audio device is
 
 :white_check_mark: In order to call ioremap() you need to know the base physical address of the device IO registers. Use [platform_get_resource()](https://lwn.net/Articles/448499) to get the `struct resource` which has the physical address in it's `start` field. The audio device is the first device of this type in the goldfish virtual hardware.
 
-:white_check_mark: Don't forget to iounmap() the virtual memory in your remove function.
+:white_check_mark: Don't forget to iounmap() the virtual memory when your driver is removed.
 
 #### Allocate coherent memory for DMA
 
@@ -41,7 +41,7 @@ DMA devices need [memory coherence](https://en.wikipedia.org/wiki/Memory_coheren
 
 :white_check_mark: Use [dma_alloc_coherent()](https://www.kernel.org/doc/Documentation/DMA-API.txt) to allocate a contiguous region of coherent memory in kernel space that can be used as shared memory with the audio device. The region should be big enough to contain 2 x 16384 byte write buffers which is all the memory you need shared with the device.
 
-:white_check_mark: Don't forget to dma_free_coherent() the DMA memory when you're done.
+:white_check_mark: Don't forget to dma_free_coherent() the DMA memory when your driver is removed.
 
 #### Set up interrupt handling
 
@@ -62,6 +62,8 @@ static irqreturn_t goldfish_piano_interrupt(int irq, void *dev)
 :white_check_mark: Use [request_irq()](https://notes.shichao.io/lkd/ch7/#registering-an-interrupt-handler) to register your interrupt handler as a shared handler with the kernel so that it will be called when the audio device interrupts the CPU.
 
 :white_check_mark: In order to call request_irq() you need to know the interrupt line number that the audio device will use to interrupt the CPU. Use [platform_get_irq()](https://lwn.net/Articles/448499) to get the interrupt line number for the goldfish audio device.
+
+:white_check_mark: Don't forget to [free_irq()](https://notes.shichao.io/lkd/ch7/#freeing-an-interrupt-handler) the IRQ line when your driver is removed.
 
 #### Tell the device where to find the write buffers
 
