@@ -2,6 +2,8 @@
 
 The piano device works in conjunction with a script to capture key presses on your keyboard and immediately pass them to your device driver by writing them to `/dev/piano`.
 
+You will turn your keyboard into a piano that can play the notes in [C major](https://en.wikipedia.org/wiki/C_major) as [square, sawtooth and sine waves](https://www.youtube.com/watch?v=j2uB4nKzGlg).
+
 #### The piano script
 
 Push the piano script to `/sdcard` on your AVD.
@@ -30,24 +32,41 @@ samples[3] = ...; // Second sample in channel 2
 
 Sound waves are represented in these samples using [pulse code modulation](https://en.wikipedia.org/wiki/Pulse-code_modulation) (PCM) which is a fancy way of saying each sample represents the amplitude of sound at that moment in time. The time of the first sample (in each channel) is t = 0 seconds. Since the goldfish audio device operates at 44.1 kHz the time of the second sample is t = 1/44100 seconds and the third sample is t = 2/44100 seconds, etc...
 
-The difference between notes on a piano is the frequency at which those samples oscillate up and down. Refer to [this chart](https://en.wikipedia.org/wiki/Piano_key_frequencies) for the frequency of each note.
+The difference between notes on a piano is the frequency at which those samples oscillate up and down.
 
-#### Generate notes with square, saw, sine waves
+#### Generate the notes in C major as square waves
 
-Program the piano driver so that when you press a key listed on one of the 3 right columns in the table your driver generates and plays the appropriate wave of the corresponding frequency for 1 second at a fixed volume.
+Program the piano driver so that when you press a keyboard key in the table below your driver generates and plays a square wave of the corresponding frequency for 1 second at a fixed volume.
 
-| Note | Freq (Hz) | Square | Saw | Sine |
-| ---- | --------- | ------ | --- | ---- |
-| a    | 440.000   | /      | ;   | p    |
-| g#   | 415.305   | .      | l   | o    |
-| g    | 391.995   | ,      | k   | i    |
-| f#   | 369.994   | m      | j   | u    |
-| f    | 349.228   | n      | h   | y    |
-| e    | 329.628   | b      | g   | t    |
-| d#   | 311.127   | v      | f   | r    |
-| d    | 293.665   | c      | d   | e    |
-| c#   | 277.183   | x      | s   | w    |
-| c    | 261.626   | z      | a   | q    |
+The bottom row of your keyboard will [play the notes](https://www.youtube.com/watch?v=tHWAo9A4YdY) in C major. The middle row on your keyboard will play the sharp notes on the black keys in between.
+
+| Note | Freq (Hz) | Keyboard |
+| ---- | --------- | -------- |
+| c    | 523.251   | ,        |
+| b    | 493.883   | m        |
+| a#   | 466.164   | j        |
+| a    | 440.000   | n        |
+| g#   | 415.305   | h        |
+| g    | 391.995   | b        |
+| f#   | 369.994   | g        |
+| f    | 349.228   | v        |
+| e    | 329.628   | c        |
+| d#   | 311.127   | d        |
+| d    | 293.665   | x        |
+| c#   | 277.183   | s        |
+| c    | 261.626   | z        |
+
+#### Generate the notes as sawtooth and sine waves
+
+Now that you have a working piano that plays square waves, extend it to support sawtooth and sine wave modes.
+
+Program the piano driver so that when you press '1', '2' & '3' the driver will switch between square, sawtooth and sine wave modes respectively.
+
+| Mode | Keyboard |
+| ---- | -------- |
+| switch to square wave mode | 1 |
+| switch to sawtooth wave mode | 2 |
+| switch to sine wave mode | 3 |
 
 Note that the kernel has no math library functions and doesn't even support floating point operations! How will you approximate a sine wave?
 
