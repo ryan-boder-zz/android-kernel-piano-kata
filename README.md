@@ -20,6 +20,8 @@ Interface with the [Goldfish emulated audio device](Hardware.md) to play audio o
 
 Now that all the building blocks are in place, go ahead [implement the piano device driver](Piano.md) turning your keyboard into a piano.
 
+Under normal circumstances you would do this kind of work in user space not in the kernel. The kernel's purpose is to provide user space applications with efficient, secure and convenient access to computing hardware. In this kata we're putting some application logic in the kernel just to practice programing in kernel space.
+
 ## Verified versions
 
 - Android Studio 3.0
